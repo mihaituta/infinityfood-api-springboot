@@ -1,4 +1,4 @@
-package com.tm.controller;
+package com.tm.model;
 import jakarta.persistence.*;
 
 @Entity
