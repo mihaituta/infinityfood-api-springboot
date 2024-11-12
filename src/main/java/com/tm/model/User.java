@@ -1,5 +1,6 @@
 package com.tm.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tm.security.Role;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +26,18 @@ public class User implements UserDetails {
     private String email;
 
     @NotNull
+    @JsonIgnore
     private String password;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "role_id")
     private Role role_id;
 
-
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
