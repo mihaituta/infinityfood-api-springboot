@@ -3,6 +3,8 @@ package com.tm.service;
 import com.tm.dto.UserLoginRequest;
 import com.tm.dto.UserRegistrationRequest;
 import com.tm.dto.UserResponseDTO;
+import com.tm.exception.DuplicateResourceException;
+import com.tm.exception.ResourceNotFoundException;
 import com.tm.model.User;
 import com.tm.repository.UserRepository;
 import com.tm.security.CustomUserDetailsService;
@@ -43,8 +45,8 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findUserByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String jwtToken = jwtUtil.generateToken(authentication.getName());
 
@@ -60,8 +62,8 @@ public class AuthService {
 
     // REGISTER NEW USER (WILL NOT BE USED, JUST FOR TESTING FOR NOW)
     public String register(UserRegistrationRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email is already in use!");
+        if (userRepository.existsUserByEmail(request.getEmail())) {
+            throw new DuplicateResourceException("Email is already in use!");
         }
 
         User user = new User();

@@ -5,6 +5,7 @@ import com.tm.dto.UserResponseDTO;
 import com.tm.model.User;
 import com.tm.repository.UserRepository;
 import com.tm.security.Role;
+import com.tm.util.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,9 +46,13 @@ public class AdminService {
     }
 
     // CREATE a new user
-    public ResponseEntity<Map<String, Object>> createUser(UserCreateDTO userCreateDTO) {
-        if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    public ResponseEntity<Response<UserResponseDTO>> createUser(UserCreateDTO userCreateDTO) {
+        if (userRepository.existsUserByEmail(userCreateDTO.getEmail())) {
+            return ResponseEntity.ok(new Response<>("error", "Email already registered", "uniqueEmail"));
+        }
+
+        if (userRepository.existsUserByName(userCreateDTO.getName())) {
+            return ResponseEntity.ok(new Response<>("error", "Username taken", "uniqueName"));
         }
 
         User user = new User();
@@ -64,18 +69,23 @@ public class AdminService {
                 user.getEmail(),
                 user.getRole().name()
         );
-        Map<String, Object> response = new HashMap<>();
-        response.put("responseType", "success");
-        response.put("data", userResponse);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new Response<>("success", "User created successfully", userResponse));
     }
 
     // UPDATE user
-    public ResponseEntity<?> updateUser(Integer id, UserCreateDTO userCreateDTO) {
+    public ResponseEntity<Response<UserResponseDTO>> updateUser(Integer id, UserCreateDTO userCreateDTO) {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response<>("error", "User not found", "userNotFound"));
+        }
+
+        if (userRepository.existsUserByEmail(userCreateDTO.getEmail())) {
+            return ResponseEntity.ok(new Response<>("error", "Email already registered", "uniqueEmail"));
+        }
+
+        if (userRepository.existsUserByName(userCreateDTO.getName())) {
+            return ResponseEntity.ok(new Response<>("error", "Username taken", "uniqueName"));
         }
 
         User user = userOpt.get();
@@ -86,17 +96,19 @@ public class AdminService {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok(new UserResponseDTO(
+        UserResponseDTO userResponse = new UserResponseDTO(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getRole().name()
-        ));
+        );
+
+        return ResponseEntity.ok(new Response<>("success", "User updated successfully", userResponse));
     }
 
     // DELETE user
-    public ResponseEntity<?> deleteUser(Integer id) {
+    public ResponseEntity<Response<String>> deleteUser(Integer id) {
         userRepository.deleteById(id);
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.ok(new Response<>("success","User deleted successfully"));
     }
 }

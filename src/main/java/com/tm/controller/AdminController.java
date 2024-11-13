@@ -1,7 +1,9 @@
 package com.tm.controller;
 
 import com.tm.dto.UserCreateDTO;
+import com.tm.dto.UserResponseDTO;
 import com.tm.service.AdminService;
+import com.tm.util.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,18 +29,18 @@ public class AdminController {
 
     // CREATE a new user
     @PostMapping("/user")
-    public ResponseEntity<Map<String, Object>> createUser(@RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<Response<UserResponseDTO>> createUser(@RequestBody UserCreateDTO userCreateDTO) {
         return adminService.createUser(userCreateDTO);
     }
 
     // UPDATE user
-    @PutMapping("/users/{id}")
+    @PatchMapping("/user/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody UserCreateDTO userCreateDTO) {
         return adminService.updateUser(id, userCreateDTO);
     }
 
     // DELETE user
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/user/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         return adminService.deleteUser(id);
     }
