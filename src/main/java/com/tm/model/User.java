@@ -1,6 +1,7 @@
 package com.tm.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tm.security.Role;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +30,10 @@ public class User implements UserDetails {
     @JsonIgnore
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role_id")
-    private Role role_id;
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("role_id")
+    private Role roleId;
 
     // Getters and Setters
     public Long getId() {
@@ -58,17 +60,17 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role_id;
+    public Role getRoleId() {
+        return roleId;
     }
 
-    public void setRole(Role role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Role roleId) {
+        this.roleId = roleId;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role_id.name()));
+        return List.of(new SimpleGrantedAuthority(roleId.name()));
     }
 
     @Override
@@ -77,7 +79,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @NotNull String getPassword() {
         return password;
     }
 

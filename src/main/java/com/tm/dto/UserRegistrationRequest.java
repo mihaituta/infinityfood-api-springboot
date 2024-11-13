@@ -1,5 +1,6 @@
 package com.tm.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tm.security.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,8 @@ public class UserRegistrationRequest {
     private Role role;
 
     //private Integer role_id;
-    private String role_id;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -36,7 +38,7 @@ public class UserRegistrationRequest {
     public void setPassword(String password) { this.password = password; }
 
     //public Integer getRole_id() { return role_id; }
-    public String getRole_id() { return role_id; }
+    public String getRoleId() { return roleId; }
 
     // Set role_id and map to the Role enum
    /* public void setRole_id(Integer role_id) {
@@ -46,12 +48,12 @@ public class UserRegistrationRequest {
         this.role = role_id == 0 ? Role.Admin : Role.Staff;
         this.role_id = role_id;
     }*/
-    public void setRole_id(String role_id) {
-        if (!Objects.equals(role_id, "Admin") && !Objects.equals(role_id, "Staff")) {
-            throw new IllegalArgumentException("Invalid role_id: must be Admin or Staff");
+    public void setRoleId(String roleId) {
+        if (!Objects.equals(roleId, "Admin") && !Objects.equals(roleId, "Staff")) {
+            throw new IllegalArgumentException("Invalid roleId: must be Admin or Staff");
         }
-        this.role = role_id.equals("Admin") ? Role.Admin : Role.Staff;
-        this.role_id = role_id;
+        this.role = roleId.equals("Admin") ? Role.Admin : Role.Staff;
+        this.roleId = roleId;
     }
 
     public Role getRole() { return role; }

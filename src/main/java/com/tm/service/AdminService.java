@@ -35,7 +35,7 @@ public class AdminService {
                         user.getId(),
                         user.getName(),
                         user.getEmail(),
-                        user.getRole().name() // Role as a string (Admin or Staff)
+                        user.getRoleId().name() // Role as a string (Admin or Staff)
                 ))
                 .collect(Collectors.toList());
 
@@ -59,7 +59,7 @@ public class AdminService {
         user.setName(userCreateDTO.getName());
         user.setEmail(userCreateDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
-        user.setRole(Role.valueOf(userCreateDTO.getRole_id()));
+        user.setRoleId(Role.valueOf(userCreateDTO.getRoleId()));
 
         userRepository.save(user);
 
@@ -67,7 +67,7 @@ public class AdminService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRoleId().name()
         );
 
         return ResponseEntity.ok(new Response<>("success", "User created successfully", userResponse));
@@ -92,7 +92,7 @@ public class AdminService {
         if (userCreateDTO.getName() != null) user.setName(userCreateDTO.getName());
         if (userCreateDTO.getEmail() != null) user.setEmail(userCreateDTO.getEmail());
         if (userCreateDTO.getPassword() != null) user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
-        if (userCreateDTO.getRole_id() != null) user.setRole(Role.valueOf(userCreateDTO.getRole_id()));
+        if (userCreateDTO.getRoleId() != null) user.setRoleId(Role.valueOf(userCreateDTO.getRoleId()));
 
         userRepository.save(user);
 
@@ -100,7 +100,7 @@ public class AdminService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRoleId().name()
         );
 
         return ResponseEntity.ok(new Response<>("success", "User updated successfully", userResponse));

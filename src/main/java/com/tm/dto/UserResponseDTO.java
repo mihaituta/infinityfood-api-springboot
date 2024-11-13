@@ -1,16 +1,28 @@
 package com.tm.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserResponseDTO {
     private Long id;
     private String name;
     private String email;
-    private String role_id;
 
-    public UserResponseDTO(Long id, String name, String email, String role_id) {
+    @JsonProperty("role_id") // to keep it role_id when retrieved
+    private String roleId;
+
+    // No-argument constructor
+    public UserResponseDTO() {}
+
+    public UserResponseDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public UserResponseDTO(Long id, String name, String email, String roleId) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.role_id = role_id;
+        this.roleId = roleId;
     }
 
     public Long getId() {
@@ -37,11 +49,11 @@ public class UserResponseDTO {
         this.email = email;
     }
 
-    public String getRole_id() {
-        return role_id;
+    public String getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(String role_id) {
-        this.role_id = role_id;
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 }

@@ -54,7 +54,7 @@ public class AuthService {
         response.put("responseType", "success");
         response.put("data", new HashMap<String, Object>() {{
             put("jwt", jwtToken);
-            put("role_id", user.getRole());
+            put("role_id", user.getRoleId());
         }});
 
         return response;
@@ -70,7 +70,7 @@ public class AuthService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
+        user.setRoleId(request.getRole());
 
         userRepository.save(user);
 
@@ -86,7 +86,7 @@ public class AuthService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRoleId().name()
         );
     }
 }

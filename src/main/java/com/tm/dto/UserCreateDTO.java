@@ -1,18 +1,22 @@
 package com.tm.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserCreateDTO {
     private Long id;
     private String name;
     private String email;
     private String password;
-    private String role_id;
 
-    public UserCreateDTO(Long id, String name, String email, String password, String role_id) {
+    @JsonProperty("role_id")
+    private String roleId;
+
+    public UserCreateDTO(Long id, String name, String email, String password, String roleId) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role_id = role_id;
+        this.roleId = roleId;
     }
 
     public Long getId() {
@@ -47,11 +51,11 @@ public class UserCreateDTO {
         this.password = password;
     }
 
-    public String getRole_id() {
-        return role_id;
+    public String getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(String role_id) {
-        this.role_id = role_id;
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 }
