@@ -12,9 +12,11 @@ public class Restaurant {
     private Long id;
 
     @NotNull
+    @Column(unique = true)
     private String name;
 
     @NotNull
+    @Column(unique = true)
     private String slug;
 
     @NotNull

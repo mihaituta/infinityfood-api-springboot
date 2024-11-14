@@ -1,4 +1,4 @@
-package com.tm.service;
+package com.tm.util;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

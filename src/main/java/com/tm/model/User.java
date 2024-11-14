@@ -21,9 +21,11 @@ public class User implements UserDetails {
     private Long id;
 
     @NotNull
+    @Column(unique = true)
     private String name;
 
     @NotNull
+    @Column(unique = true)
     private String email;
 
     @NotNull
