@@ -54,7 +54,7 @@ public class AuthService {
         response.put("responseType", "success");
         response.put("data", new HashMap<String, Object>() {{
             put("jwt", jwtToken);
-            put("role_id", user.getRoleId());
+            put("roleId", user.getRoleId());
         }});
 
         return response;

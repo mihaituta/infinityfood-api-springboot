@@ -1,14 +1,10 @@
 package com.tm.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UserCreateDTO {
     private Long id;
     private String name;
     private String email;
     private String password;
-
-    @JsonProperty("role_id")
     private String roleId;
 
     public UserCreateDTO(Long id, String name, String email, String password, String roleId) {

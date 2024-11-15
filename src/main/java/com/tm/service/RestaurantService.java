@@ -1,5 +1,6 @@
 package com.tm.service;
 
+import com.tm.dto.UpdateRestaurantRequest;
 import com.tm.dto.UserResponseDTO;
 import com.tm.model.Restaurant;
 import com.tm.repository.RestaurantPreviewProjection;
@@ -33,6 +34,11 @@ public class RestaurantService {
         this.authService = authService;
     }
 
+    private String generateSlug(String name) {
+        return name.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
+    }
+
+    // ----- PUBLIC -----
     // GET RESTAURANTS COMPLETE
     public ResponseEntity<Response<Object>> getRestaurantsComplete() {
         try {
@@ -75,7 +81,7 @@ public class RestaurantService {
         }
     }
 
-    // GET RESTAURANT BY ID
+    // GET RESTAURANT BY SLUG
     public ResponseEntity<Response<Object>> getRestaurantComplete(String slug) {
         try {
             Restaurant restaurant = restaurantRepository.findBySlug(slug)
@@ -116,29 +122,15 @@ public class RestaurantService {
         }
     }
 
-    // GET RESTAURANT WHERE LOGGED-IN USER IS A STAFF MEMBER
-    public ResponseEntity<Response<Object>> getRestaurantByLoggedInUser(){
-        try {
-            UserResponseDTO loggedInUser = authService.getLoggedInUser();
-            Optional<Restaurant> restaurantOptional = restaurantRepository.findByUserId(loggedInUser.getId());
 
-            if (restaurantOptional.isPresent()) {
-                Restaurant restaurant = restaurantOptional.get();
-                return ResponseEntity.ok(new Response<>("success", "Restaurant found!", restaurant));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response<>("error", "Restaurant not found for the user"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("error", "Error retrieving restaurant", e.getMessage()));
-        }
-    }
+    // ----- ADMIN ONLY -----
     // CREATE RESTAURANT
-    public ResponseEntity<Response<String>> createRestaurant(String name, Long user_id, String city, String previewDescription, MultipartFile previewImage, MultipartFile backgroundImage, MultipartFile logoImage, String contactText, String phone1, String phone2, String mail1, String mail2, String aboutText) throws Exception {
+    public ResponseEntity<Response<String>> createRestaurant(String name, Long userId, String city, String previewDescription, MultipartFile previewImage, MultipartFile backgroundImage, MultipartFile logoImage, String contactText, String phone1, String phone2, String mail1, String mail2, String aboutText) throws Exception {
         try {
             Restaurant restaurant = new Restaurant();
             restaurant.setName(name);
-            restaurant.setSlug(name.toLowerCase().replaceAll(" ", "-"));
-            restaurant.setUserId(user_id);
+            restaurant.setSlug(generateSlug(name));
+            restaurant.setUserId(userId);
             restaurant.setCity(city);
             restaurant.setPreviewDescription(previewDescription);
 
@@ -158,7 +150,6 @@ public class RestaurantService {
 
             return ResponseEntity.ok(new Response<>("success", "Restaurant created successfully"));
         } catch (DataIntegrityViolationException e) {
-            // Handle the unique constraint violation (duplicate name or slug)
             return ResponseEntity.ok(new Response<>("error", "Restaurant already registered", "nameTaken"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("error", "Failed to create restaurant: " + e.getMessage()));
@@ -166,8 +157,103 @@ public class RestaurantService {
     }
 
     // UPDATE RESTAURANT
+    public ResponseEntity<Response<Void>> updateRestaurant(Long id, UpdateRestaurantRequest request) {
+        try {
+            // Validate unique name
+            if (request.getName() != null && restaurantRepository.existsRestaurantByName(request.getName())) {
+                return ResponseEntity.ok().body(new Response<>("error", "A restaurant with this name already exists!", "nameTaken"));
+            }
+            // Fetch the restaurant by ID
+            Restaurant restaurant = restaurantRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+            if (request.getName() != null) {
+                restaurant.setName(request.getName());
+                restaurant.setSlug(generateSlug(request.getName()));
+            }
+
+            System.out.println(request.getUserId());
+            if (request.getUserId() != null) {
+                restaurant.setUserId(request.getUserId());
+            }
+
+            if (request.getCity() != null) {
+                restaurant.setCity(request.getCity());
+            }
+
+            if (request.getPreviewDescription() != null) {
+                restaurant.setPreviewDescription(request.getPreviewDescription());
+            }
+
+            if (request.getPreviewImage() != null) {
+                cloudinaryService.deleteImage(restaurant.getPreviewImage());
+                restaurant.setPreviewImage(cloudinaryService.uploadImage(request.getPreviewImage(), restaurant.getSlug() + "/restaurant-images", "PreviewImage"));
+            }
+
+            if (request.getBackgroundImage() != null) {
+                cloudinaryService.deleteImage(restaurant.getBackgroundImage());
+                restaurant.setBackgroundImage(cloudinaryService.uploadImage(request.getBackgroundImage(), restaurant.getSlug() + "/restaurant-images","backgroundImage"));
+            }
+
+            if (request.getLogoImage() != null) {
+                cloudinaryService.deleteImage(restaurant.getLogoImage());
+                restaurant.setLogoImage(cloudinaryService.uploadImage(request.getLogoImage(), restaurant.getSlug() + "/restaurant-images","logoImage"));
+            }
+
+            if (request.getContactText() != null) {
+                restaurant.setContactText(request.getContactText());
+            }
+
+            if (request.getPhone1() != null) {
+                restaurant.setPhone1(request.getPhone1());
+            }
+
+            if (request.getPhone2() != null) {
+                restaurant.setPhone2(request.getPhone2());
+            }
+
+            if (request.getMail1() != null) {
+                restaurant.setMail1(request.getMail1());
+            }
+
+            if (request.getMail2() != null) {
+                restaurant.setMail2(request.getMail2());
+            }
+
+            if (request.getAboutText() != null) {
+                restaurant.setAboutText(request.getAboutText());
+            }
+
+            restaurantRepository.save(restaurant);
+
+            return ResponseEntity.ok(new Response<>("success", "Restaurant updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response<>("error", "Error updating restaurant: ", e.getMessage()));
+        }
+    }
+
+
+    // DELETE RESTAURANT
+
+    // ----- STAFF ONLY -----
+    // GET RESTAURANT WHERE LOGGED-IN USER IS A STAFF MEMBER
+    public ResponseEntity<Response<Object>> getRestaurantByLoggedInUser(){
+        try {
+            UserResponseDTO loggedInUser = authService.getLoggedInUser();
+            Optional<Restaurant> restaurantOptional = restaurantRepository.findByUserId(loggedInUser.getId());
+
+            if (restaurantOptional.isPresent()) {
+                Restaurant restaurant = restaurantOptional.get();
+                return ResponseEntity.ok(new Response<>("success", "Restaurant found!", restaurant));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response<>("error", "Restaurant not found for the user"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("error", "Error retrieving restaurant", e.getMessage()));
+        }
+    }
 
     // STAFF MEMBER UPDATE HIS RESTAURANT
 
-    // DELETE RESTAURANT
 }

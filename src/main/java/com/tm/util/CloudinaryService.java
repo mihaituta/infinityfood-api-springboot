@@ -17,15 +17,22 @@ public class CloudinaryService {
     private Cloudinary cloudinary;
 
     public String uploadImage(MultipartFile file, String folder, String customName) throws IOException {
-        // Generate a custom public ID for the image
-        String publicId = folder + "/" + customName;
+        try {
+            String publicId = folder + "/" + customName;
+            Map<?,?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("public_id", publicId));
+            return (String) uploadResult.get("public_id");
+        } catch (Exception e) {
+            throw new RuntimeException("Error uploading image to Cloudinary: " + e.getMessage());
+        }
+    }
 
-        // Upload the image with the custom public ID
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "public_id", publicId
-        ));
-
-        // Return the public URL of the uploaded image
-        return (String) uploadResult.get("public_id");
+    public void deleteImage(String publicId) {
+        if(publicId != null) {
+            try {
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            } catch (Exception e) {
+                throw new RuntimeException("Error deleting image from Cloudinary: " + e.getMessage());
+            }
+        }
     }
 }

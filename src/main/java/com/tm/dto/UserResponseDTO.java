@@ -1,16 +1,11 @@
 package com.tm.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UserResponseDTO {
     private Long id;
     private String name;
     private String email;
-
-    @JsonProperty("role_id") // to keep it role_id when retrieved
     private String roleId;
 
-    // No-argument constructor
     public UserResponseDTO() {}
 
     public UserResponseDTO(Long id, String name) {

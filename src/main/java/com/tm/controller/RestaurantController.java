@@ -1,7 +1,9 @@
 package com.tm.controller;
 
+import com.tm.dto.UpdateRestaurantRequest;
 import com.tm.service.RestaurantService;
 import com.tm.util.Response;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +32,7 @@ public class RestaurantController {
         return restaurantService.getRestaurantsPreview();
     }
 
-    // GET RESTAURANT BY ID
+    // GET RESTAURANT BY SLUG
     @GetMapping("/restaurant-complete/{slug}")
     public ResponseEntity<Response<Object>> getRestaurantComplete(@PathVariable String slug){
         return restaurantService.getRestaurantComplete(slug);
@@ -43,7 +45,7 @@ public class RestaurantController {
     @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<Response<String>> createRestaurant(
             @RequestParam String name,
-            @RequestParam Long user_id,
+            @RequestParam Long userId,
             @RequestParam String city,
             @RequestParam String previewDescription,
             @RequestParam MultipartFile previewImage,
@@ -57,9 +59,18 @@ public class RestaurantController {
             @RequestParam String aboutText) throws Exception {
 
            return restaurantService.createRestaurant(
-                    name, user_id, city, previewDescription, previewImage,
+                    name, userId, city, previewDescription, previewImage,
                     backgroundImage, logoImage, contactText, phone1, phone2, mail1, mail2, aboutText
             );
+    }
+
+    // UPDATE RESTAURANT
+    @PatchMapping("/admin/restaurant/{id}")
+    @PreAuthorize("hasAuthority('Admin')")
+    public ResponseEntity<Response<Void>> updateRestaurant(
+            @PathVariable Long id,
+            @Valid @ModelAttribute UpdateRestaurantRequest request) {
+        return restaurantService.updateRestaurant(id, request);
     }
 
     // ----- STAFF ONLY ROUTES -----

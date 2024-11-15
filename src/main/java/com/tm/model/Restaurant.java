@@ -1,6 +1,5 @@
 package com.tm.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +19,6 @@ public class Restaurant {
     private String slug;
 
     @NotNull
-    @JsonProperty("user_id")
     private Long userId;
 
     @NotNull

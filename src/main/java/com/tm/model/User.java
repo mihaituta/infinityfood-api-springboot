@@ -1,7 +1,6 @@
 package com.tm.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tm.security.Role;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
@@ -32,25 +31,22 @@ public class User implements UserDetails {
     @JsonIgnore
     private String password;
 
-    @Column(name = "role_id")
     @Enumerated(EnumType.STRING)
-    @JsonProperty("role_id")
     private Role roleId;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
 
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
-    public String getEmail() {
+    public @NotNull String getEmail() {
         return email;
     }
 
