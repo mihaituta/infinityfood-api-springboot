@@ -12,11 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -38,12 +36,12 @@ public class AdminService {
                         user.getEmail(),
                         user.getRoleId().name() // Role as a string (Admin or Staff)
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("responseType", "success");
-        response.put("data", users);
-        return response;
+        return Map.of(
+                "responseType", "success",
+                "data", users
+        );
     }
 
     // CREATE a new user
@@ -73,7 +71,6 @@ public class AdminService {
             );
 
             return ResponseEntity.ok(new Response<>("success", "User created successfully", userResponse));
-
         } catch (DataIntegrityViolationException e) {
             // Handle unique constraint violation
             return ResponseEntity.status(HttpStatus.CONFLICT)

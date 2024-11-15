@@ -4,6 +4,7 @@ import com.tm.dto.UserLoginRequest;
 import com.tm.dto.UserRegistrationRequest;
 import com.tm.dto.UserResponseDTO;
 import com.tm.service.AuthService;
+import com.tm.util.Response;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,8 @@ public class AuthController {
 
     // Login endpoint
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> loginUser(@Valid @RequestBody UserLoginRequest loginRequest) {
-        Map<String, Object> response = authService.login(loginRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Response<Object>> loginUser(@Valid @RequestBody UserLoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 
     // Register endpoint

@@ -1,12 +1,11 @@
 package com.tm.service;
 
+import com.tm.dto.MenuDTO;
 import com.tm.dto.UpdateRestaurantRequest;
 import com.tm.dto.UserResponseDTO;
+import com.tm.model.Menu;
 import com.tm.model.Restaurant;
-import com.tm.repository.RestaurantPreviewProjection;
-import com.tm.repository.RestaurantRepository;
-import com.tm.repository.UserIdNameProjection;
-import com.tm.repository.UserRepository;
+import com.tm.repository.*;
 import com.tm.security.Role;
 import com.tm.util.CloudinaryService;
 import com.tm.util.Response;
@@ -26,13 +25,16 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
+    private final MenuRepository menuRepository;
+
     private final UserRepository userRepository;
 
     private final CloudinaryService cloudinaryService;
 
     private final AuthService authService;
-    public RestaurantService(RestaurantRepository restaurantRepository, UserRepository userRepository, CloudinaryService cloudinaryService, AuthService authService) {
+    public RestaurantService(RestaurantRepository restaurantRepository, MenuRepository menuRepository, UserRepository userRepository, CloudinaryService cloudinaryService, AuthService authService) {
         this.restaurantRepository = restaurantRepository;
+        this.menuRepository = menuRepository;
         this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
         this.authService = authService;
@@ -41,6 +43,7 @@ public class RestaurantService {
     private String generateSlug(String name) {
         return name.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
     }
+
 
     // ----- PUBLIC -----
     // GET RESTAURANTS COMPLETE
@@ -53,11 +56,7 @@ public class RestaurantService {
             data.put("restaurants", restaurants);
             data.put("users", staffUsers);
 
-            Response<Object> response = new Response<>("success", "Restaurants and Staff Users retrieved successfully");
-            response.setData(data);
-
-            //return ResponseEntity.ok(new Response<>("success", "Restaurants retrieved successfully", restaurants));
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new Response<>("success", "Restaurants and Staff Users retrieved successfully", data));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("error", "Failed to retrieve restaurants: ", e.getMessage()));
         }
@@ -75,10 +74,7 @@ public class RestaurantService {
             data.put("restaurants", restaurantsPreview);
             data.put("cities", sortedUniqueCities);
 
-            Response<Object> response = new Response<>("success", "Restaurant previews retrieved successfully");
-            response.setData(data);
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new Response<>("success", "Restaurant previews retrieved successfully",data));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new Response<>("error", "Failed to retrieve restaurant previews: ", e.getMessage()));
@@ -91,40 +87,55 @@ public class RestaurantService {
             Restaurant restaurant = restaurantRepository.findBySlug(slug)
                     .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-            // Get the menus for the restaurant
-            //List<Menu> menus = menuRepository.findByRestaurantId(restaurant.getId());
+            List<Menu> menus = menuRepository.findByRestaurantId(restaurant.getId());
 
-            // Extract types from menus
-            /*List<String> types = menus.stream()
-                    .map(Menu::getType)
+            List<MenuDTO> menuDTOs = menus.stream()
+                    .map(menu -> new MenuDTO(
+                            menu.getId(),
+                            menu.getName(),
+                            menu.getDescription(),
+                            menu.getPrice(),
+                            menu.getImage(),
+                            menu.getType(),
+                            menu.getRestaurantId()
+                    ))
+                    .toList();
+
+          /*  // Extract types from menus
+            List<String> types = menuDTOs.stream()
+                    .map(MenuDTO::getType)
                     .distinct()
-                    .collect(Collectors.toList());*/
+                    .toList();
 
-            // Define the order of types
             List<String> order = Arrays.asList("Starter", "Main Course", "Fastfood", "Pizza", "Dessert", "Drinks");
 
             // Reorder types based on the predefined order
-          /*  List<String> orderedTypes = types.stream()
+            List<String> orderedTypes = types.stream()
                     .filter(order::contains)
                     .sorted(Comparator.comparingInt(order::indexOf))
-                    .collect(Collectors.toList());*/
+                    .toList();*/
 
-            // Prepare the response
-            Map<String, Object> data = new HashMap<>();
-            data.put("restaurant", restaurant);
-            //data.put("types", orderedTypes);
-            //data.put("menus", menus);
 
-            Response<Object> response = new Response<>("success", "Restaurant retrieved successfully");
-            response.setData(data);
+            List<String> predefinedOrder = List.of("Starter", "Main Course", "Fastfood", "Pizza", "Dessert", "Drinks");
+            List<String> orderedTypes = menus.stream()
+                    .map(Menu::getType)
+                    .distinct()
+                    .sorted(Comparator.comparingInt(predefinedOrder::indexOf))
+                    .toList();
 
-            return ResponseEntity.ok(response);
+            Map<String, Object> data = Map.of(
+                    "restaurant", restaurant,
+                    "types", orderedTypes,
+                    "menus", menuDTOs
+            );
 
+            return ResponseEntity.ok(new Response<>("success", "Restaurant retrieved successfully", data));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new Response<>("error", "Failed to retrieve restaurant: ", e.getMessage()));
         }
     }
+
 
     // ----- ADMIN ONLY -----
     // CREATE RESTAURANT
@@ -198,6 +209,7 @@ public class RestaurantService {
                     .body(new Response<>("error", "Error deleting restaurant", e.getMessage()));
         }
     }
+
 
     // ----- STAFF ONLY -----
 

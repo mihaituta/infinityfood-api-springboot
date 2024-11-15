@@ -9,7 +9,10 @@ import com.tm.model.User;
 import com.tm.repository.UserRepository;
 import com.tm.security.CustomUserDetailsService;
 import com.tm.security.JwtUtil;
+import com.tm.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -40,29 +42,31 @@ public class AuthService {
     }
 
     // LOGIN
-    public Map<String, Object> login(UserLoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    public ResponseEntity<Response<Object>> login(UserLoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = userRepository.findUserByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            User user = userRepository.findUserByEmail(loginRequest.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String jwtToken = jwtUtil.generateToken(authentication.getName());
+            String jwtToken = jwtUtil.generateToken(authentication.getName());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("responseType", "success");
-        response.put("data", new HashMap<String, Object>() {{
-            put("jwt", jwtToken);
-            put("roleId", user.getRoleId());
-        }});
+            Map<String, Object> data = Map.of(
+                    "jwt", jwtToken,
+                    "roleId", user.getRoleId());
 
-        return response;
+            return ResponseEntity.ok(new Response<>("success", "Logged-In successfully!", data));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response<>("error", "Error Logging-In!", e.getMessage()));
+        }
     }
 
     // REGISTER NEW USER (WILL NOT BE USED, JUST FOR TESTING FOR NOW)
     public String register(UserRegistrationRequest request) {
-        if (userRepository.existsUserByEmail(request.getEmail())) {
+        if(userRepository.existsUserByEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email is already in use!");
         }
 

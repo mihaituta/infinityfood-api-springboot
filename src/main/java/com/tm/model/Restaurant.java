@@ -3,6 +3,9 @@ package com.tm.model;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "restaurants")
 public class Restaurant {
@@ -53,6 +56,9 @@ public class Restaurant {
 
     @NotNull
     private String mail2;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus = new ArrayList<>();
 
     public Long getId() {
         return id;
