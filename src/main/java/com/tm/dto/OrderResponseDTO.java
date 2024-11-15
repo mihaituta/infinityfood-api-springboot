@@ -1,56 +1,19 @@
-package com.tm.model;
+package com.tm.dto;
 
-import jakarta.persistence.*;
+public class OrderResponseDTO {
 
-import java.util.List;
-
-@Entity
-@Table(name = "orders")
-public class Order {
-
-    public static final int STATUS_IN_PROGRESS = 0;
-    public static final int STATUS_DONE = 1;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private Integer status;
-
-    @Column(nullable = false)
     private Double totalPrice;
-
-    @Column(nullable = false)
     private String menus;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String phone;
-
-    @Column(nullable = false)
     private String city;
-
-    @Column(nullable = false)
     private String address;
-
     private String houseNr;
-
     private String floor;
-
     private String apartment;
-
-    @Column(length = 500)
     private String information;
-
-    @Column(name = "restaurantId", nullable = false)
-    private Long restaurantId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurantId", nullable = false, insertable = false, updatable = false)
-    private Restaurant restaurant;
 
     public Long getId() {
         return id;
@@ -148,19 +111,23 @@ public class Order {
         this.information = information;
     }
 
-    public Long getRestaurantId() {
-        return restaurantId;
+    // Constructor
+    public OrderResponseDTO(Long id, Integer status, Double totalPrice, String menus, String name,
+                            String phone, String city, String address, String houseNr,
+                            String floor, String apartment, String information) {
+        this.id = id;
+        this.status = status;
+        this.totalPrice = totalPrice;
+        this.menus = menus;
+        this.name = name;
+        this.phone = phone;
+        this.city = city;
+        this.address = address;
+        this.houseNr = houseNr;
+        this.floor = floor;
+        this.apartment = apartment;
+        this.information = information;
     }
 
-    public void setRestaurantId(Long restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
+    // Getters and setters...
 }
