@@ -41,8 +41,8 @@ public class RestaurantController {
     // ----- ADMIN ONLY ROUTES -----
 
     // CREATE RESTAURANT
-    @PostMapping("/admin/restaurant")
     @PreAuthorize("hasAuthority('Admin')")
+    @PostMapping("/admin/restaurant")
     public ResponseEntity<Response<String>> createRestaurant(
             @RequestParam String name,
             @RequestParam Long userId,
@@ -65,12 +65,19 @@ public class RestaurantController {
     }
 
     // UPDATE RESTAURANT
-    @PatchMapping("/admin/restaurant/{id}")
     @PreAuthorize("hasAuthority('Admin')")
+    @PatchMapping("/admin/restaurant/{id}")
     public ResponseEntity<Response<Void>> updateRestaurant(
             @PathVariable Long id,
             @Valid @ModelAttribute UpdateRestaurantRequest request) {
         return restaurantService.updateRestaurant(id, request);
+    }
+
+    // DELETE RESTAURANT
+    @PreAuthorize("hasAuthority('Admin')")
+    @DeleteMapping("/admin/restaurant/{id}")
+    public ResponseEntity<Response<Void>> deleteRestaurant(@PathVariable Long id) {
+        return restaurantService.deleteRestaurant(id);
     }
 
     // ----- STAFF ONLY ROUTES -----
@@ -79,5 +86,12 @@ public class RestaurantController {
     @GetMapping("/staff/restaurant")
     public ResponseEntity<Response<Object>> getRestaurantByLoggedInUser() {
         return restaurantService.getRestaurantByLoggedInUser();
+    }
+
+    // STAFF MEMBER UPDATE HIS RESTAURANT
+    @PreAuthorize("hasAuthority('Staff')")
+    @PatchMapping("/staff/restaurant")
+    public ResponseEntity<Response<Void>> staffUpdateRestaurant(@ModelAttribute UpdateRestaurantRequest request) {
+        return restaurantService.staffUpdateRestaurant(request);
     }
 }

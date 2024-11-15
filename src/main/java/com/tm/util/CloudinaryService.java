@@ -35,4 +35,22 @@ public class CloudinaryService {
             }
         }
     }
+
+    public void deleteAssetsByPrefix(String prefix) {
+        try {
+            cloudinary.api().deleteResourcesByPrefix(prefix, ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting assets with prefix: " + prefix, e);
+        }
+    }
+
+    public void deleteFolder(String folder) {
+        try {
+            cloudinary.api().deleteFolder(folder, ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting folder: " + folder, e);
+        }
+    }
+
+
 }
