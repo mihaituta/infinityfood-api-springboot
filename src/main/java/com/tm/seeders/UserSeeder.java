@@ -3,7 +3,6 @@ package com.tm.seeders;
 import com.tm.model.User;
 import com.tm.repository.UserRepository;
 import com.tm.security.Role;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class UserSeeder implements CommandLineRunner {
+public class UserSeeder {
 
     private final UserRepository userRepository;
 
@@ -23,8 +22,7 @@ public class UserSeeder implements CommandLineRunner {
     }
 
 
-    @Override
-    public void run(String... args) {
+    public void seed() {
         if (userRepository.count() == 0) { // Prevent duplicate seed
             List<User> users = Arrays.asList(
                     new User("admin", "admin@gmail.com", passwordEncoder.encode("123123"), Role.Admin),

@@ -4,13 +4,13 @@ import com.tm.model.Restaurant;
 import com.tm.repository.RestaurantRepository;
 import com.tm.util.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class RestaurantSeeder implements CommandLineRunner {
+public class RestaurantSeeder {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -25,8 +25,7 @@ public class RestaurantSeeder implements CommandLineRunner {
         return name.toLowerCase().trim().replaceAll("\\s+", "-");
     }
 
-    @Override
-    public void run(String... args) {
+    public void seed() {
         if(restaurantRepository.count() == 0) {
             List<String> storeNames = List.of("Demo", "La Familiar", "Ramen Korewa", "Pizza Hut", "Spartan", "McDonald's", "Domino's Pizza", "KFC", "Pizza Delivery");
             List<String> cities = List.of("Craiova", "Bucharest", "Cluj", "Iasi");

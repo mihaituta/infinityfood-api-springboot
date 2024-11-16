@@ -6,7 +6,6 @@ import com.tm.model.Menu;
 import com.tm.model.Restaurant;
 import com.tm.repository.MenuRepository;
 import com.tm.repository.RestaurantRepository;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class MenuSeeder implements CommandLineRunner {
+public class MenuSeeder {
 
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
@@ -27,8 +26,7 @@ public class MenuSeeder implements CommandLineRunner {
         this.cloudinary = cloudinary;
     }
 
-    @Override
-    public void run(String... args) {
+    public void seed() {
         if (menuRepository.count() == 0) { // Seed only if the table is empty
             seedMenus();
         }
@@ -166,9 +164,9 @@ public class MenuSeeder implements CommandLineRunner {
         List<Restaurant> restaurants = restaurantRepository.findAll();
 
 
-        for (Restaurant restaurant : restaurants) {
+       /* for (Restaurant restaurant : restaurants) {
             uploadMenuImagesToCloudinary(restaurant.getSlug());
-        }
+        }*/
 
         //uploadMenuImagesToCloudinary("demo");
 

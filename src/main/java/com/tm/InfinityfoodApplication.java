@@ -11,5 +11,4 @@ public class InfinityfoodApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(InfinityfoodApplication.class, args);
 	}
-
 }
