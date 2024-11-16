@@ -2,9 +2,6 @@ package com.tm.seeders;
 
 import com.tm.model.Restaurant;
 import com.tm.repository.RestaurantRepository;
-import com.tm.util.CloudinaryService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,12 +9,12 @@ import java.util.List;
 @Component
 public class RestaurantSeeder {
 
-    @Autowired
-    private RestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
+    public RestaurantSeeder(RestaurantRepository restaurantRepository) {
+        this.restaurantRepository = restaurantRepository;
 
+    }
     private String generateSlug(String name) {
         // Remove all characters that are not letters, numbers, or spaces
         name = name.replaceAll("[^a-zA-Z0-9\\s]", "");
