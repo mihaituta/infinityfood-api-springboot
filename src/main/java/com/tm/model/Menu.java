@@ -40,6 +40,19 @@ public class Menu {
     @JoinColumn(name = "restaurantId", nullable = false, insertable = false, updatable = false)
     private Restaurant restaurant;
 
+    public Menu(String name, String description, Double price, String image, String type, Long restaurantId) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.image = image;
+        this.type = type;
+        this.restaurantId = restaurantId;
+    }
+
+    public Menu() {
+
+    }
+
     public Long getId() {
         return id;
     }

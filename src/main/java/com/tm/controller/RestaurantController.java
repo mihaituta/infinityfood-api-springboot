@@ -56,7 +56,7 @@ public class RestaurantController {
             @RequestParam String phone2,
             @RequestParam String mail1,
             @RequestParam String mail2,
-            @RequestParam String aboutText) throws Exception {
+            @RequestParam String aboutText) {
 
            return restaurantService.createRestaurant(
                     name, userId, city, previewDescription, previewImage,

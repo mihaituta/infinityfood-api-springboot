@@ -37,9 +37,14 @@ public class OrderController {
     // UPDATE ORDER STATUS
     @PreAuthorize("hasAuthority('Staff')")
     @PatchMapping("/staff/order/{id}")
-    public ResponseEntity<Response<Void>> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateRequest request) {
+    public ResponseEntity<Response<Void>> updateOrder(@PathVariable Long id, @ModelAttribute OrderUpdateRequest request) {
         return orderService.updateOrder(id, request);
     }
 
     // DELETE ORDER
+    @PreAuthorize("hasAuthority('Staff')")
+    @DeleteMapping("/staff/order/{id}")
+    public ResponseEntity<Response<Void>> deleteOrder(@PathVariable Long id) {
+        return orderService.deleteOrder(id);
+    }
 }

@@ -41,9 +41,11 @@ public class RestaurantService {
     }
 
     private String generateSlug(String name) {
-        return name.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
+        // Remove all characters that are not letters, numbers, or spaces
+        name = name.replaceAll("[^a-zA-Z0-9\\s]", "");
+        // Replace spaces with hyphens and convert to lowercase
+        return name.toLowerCase().trim().replaceAll("\\s+", "-");
     }
-
 
     // ----- PUBLIC -----
     // GET RESTAURANTS COMPLETE
@@ -271,17 +273,17 @@ public class RestaurantService {
 
         if (request.getPreviewImage() != null) {
             cloudinaryService.deleteImage(restaurant.getPreviewImage());
-            restaurant.setPreviewImage(cloudinaryService.uploadImage(request.getPreviewImage(), restaurant.getSlug() + "/restaurant-images", "PreviewImage"));
+            restaurant.setPreviewImage(cloudinaryService.uploadImage(request.getPreviewImage(), restaurant.getSlug() + "/restaurant-images", "previewImage"));
         }
 
         if (request.getBackgroundImage() != null) {
             cloudinaryService.deleteImage(restaurant.getBackgroundImage());
-            restaurant.setBackgroundImage(cloudinaryService.uploadImage(request.getBackgroundImage(), restaurant.getSlug() + "/restaurant-images", "BackgroundImage"));
+            restaurant.setBackgroundImage(cloudinaryService.uploadImage(request.getBackgroundImage(), restaurant.getSlug() + "/restaurant-images", "backgroundImage"));
         }
 
         if (request.getLogoImage() != null) {
             cloudinaryService.deleteImage(restaurant.getLogoImage());
-            restaurant.setLogoImage(cloudinaryService.uploadImage(request.getLogoImage(), restaurant.getSlug() + "/restaurant-images", "LogoImage"));
+            restaurant.setLogoImage(cloudinaryService.uploadImage(request.getLogoImage(), restaurant.getSlug() + "/restaurant-images", "logoImage"));
         }
 
         if (request.getContactText() != null) {

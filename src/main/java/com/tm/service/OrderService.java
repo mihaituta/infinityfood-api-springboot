@@ -63,10 +63,6 @@ public class OrderService {
     // CREATE ORDER
     public ResponseEntity<Response<Void>> createOrder(OrderRequestDTO request) {
         try {
-            UserResponseDTO loggedInUser = authService.getLoggedInUser();
-            Restaurant restaurant = restaurantRepository.findByUserId(loggedInUser.getId())
-                    .orElseThrow(() -> new RuntimeException("Restaurant not found for the logged-in user"));
-
             // Validate required fields
             if(request.getTotalPrice() == null || request.getMenus() == null ||
                     request.getName() == null || request.getPhone() == null ||
@@ -83,7 +79,7 @@ public class OrderService {
             order.setPhone(request.getPhone());
             order.setCity(request.getCity());
             order.setAddress(request.getAddress());
-            order.setRestaurantId(restaurant.getId());
+            order.setRestaurantId(request.getRestaurantId());
 
             // Optional fields
             if(request.getHouseNr() != null)
@@ -106,7 +102,6 @@ public class OrderService {
     }
 
     // UPDATE ORDER STATUS
-    // UPDATE ORDER
     public ResponseEntity<Response<Void>> updateOrder(Long orderId, OrderUpdateRequest request) {
         try {
             // Validate the status
@@ -130,5 +125,28 @@ public class OrderService {
                     .body(new Response<>("error", "Error updating order", e.getMessage()));
         }
     }
+
     // DELETE ORDER
+    public ResponseEntity<Response<Void>> deleteOrder(Long orderId) {
+        try {
+            UserResponseDTO loggedInUser = authService.getLoggedInUser();
+            Restaurant restaurant = restaurantRepository.findByUserId(loggedInUser.getId())
+                    .orElseThrow(() -> new RuntimeException("Restaurant not found for the logged-in user"));
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+
+            // Ensure the order belongs to the restaurant
+            if (!order.getRestaurantId().equals(restaurant.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(new Response<>("error", "You don't have permission to delete this order", "unauthorized"));
+            }
+
+            orderRepository.delete(order);
+
+            return ResponseEntity.ok(new Response<>("success", "Order deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response<>("error", "Error deleting order", e.getMessage()));
+        }
+    }
 }
