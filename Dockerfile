@@ -5,7 +5,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the packaged Spring Boot application JAR file into the container
-COPY out/artifacts/Infinityfood_jar/Infinityfood.jar app.jar
+COPY target/Infinityfood-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose port 8080
 EXPOSE 8080
