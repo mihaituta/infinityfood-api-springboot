@@ -27,15 +27,14 @@ public class UserSeeder {
             List<User> users = Arrays.asList(
                     new User("admin", "admin@gmail.com", passwordEncoder.encode("123123"), Role.Admin),
                     new User("staff", "staff@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("1", "1@gmail.com", passwordEncoder.encode("123123"), Role.Admin),
-                    new User("LaFamiliar", "2@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("RamenKorewa", "3@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("PizzaHut", "4@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("Spartan", "5@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("McDonalds", "6@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("DominosPizza", "7@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("KFC", "8@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
-                    new User("PizzaDelivery", "9@gmail.com", passwordEncoder.encode("123123"), Role.Staff)
+                    new User("LaFamiliar", "1@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("RamenKorewa", "2@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("PizzaHut", "3@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("Spartan", "4@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("McDonalds", "5@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("DominosPizza", "6@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("KFC", "7@gmail.com", passwordEncoder.encode("123123"), Role.Staff),
+                    new User("PizzaDelivery", "8@gmail.com", passwordEncoder.encode("123123"), Role.Staff)
             );
             userRepository.saveAll(users);
             System.out.println("Users seeded!");
