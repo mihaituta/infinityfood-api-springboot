@@ -3,7 +3,7 @@
 </h1>
 
 # Infinity Food API
-**InfinityFood** is a resturant management system.
+**InfinityFood** is a restaurant management system.
 
 This is the **back-end API** part of the project.
 <br>
