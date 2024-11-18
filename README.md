@@ -7,7 +7,7 @@
 
 This is the **back-end API** part of the project.
 <br>
-<a href="https://github.com/mihaituta/infinityfood" rel="noreferrer" target="_blank">Front-end github link.</a>
+<a href="https://github.com/mihaituta/Infinityfood-frontend-vue" rel="noreferrer" target="_blank">Front-end github link.</a>
 
 <a href="https://infinityfood.netlify.app" rel="noreferrer" target="_blank">Live demo</a>
 
